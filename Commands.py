@@ -9,6 +9,87 @@ import json
 
 _icondir_ = os.path.join(os.path.dirname(__file__), 'resources')
 
+class Subject():
+    def __init__(self, fp, base) -> None:
+        self.Type = "Subject"
+        fp.addProperty("App::PropertyString", "Description", "Base", "Description").Description = ""
+        fp.addProperty("App::PropertyLink", "Base", "OpticalObject", "FreeCAD object to be subject").Base = base
+        fp.Proxy = self
+        # self.original_object = obj
+        # if hasattr(obj, "CustomProperty") == False:
+        #     obj.addProperty("App::PropertyString", "CustomProperty", "MyObject", "A custom property.")
+        # pass
+
+    def execute(self, obj):
+        """
+        Called on document recompute
+        """        
+        print("Hoge")
+
+class CreateSubjectCommand():
+    '''This class will be loaded when the workbench is activated in FreeCAD. You must restart FreeCAD to apply changes in this class'''  
+    convertable_parts = []
+
+    def __init__(self) -> None:
+        self.prepare()
+
+    def Activated(self):
+        '''Will be called when the feature is executed.'''
+        self.prepare()
+
+        objects = Gui.Selection.getSelection()
+        for obj in objects:
+            self.process_object(obj)
+
+        for part in self.convertable_parts:
+            # カスタムPartを指定した場合は無視
+            if hasattr(part, "Proxy"):
+                if part.Proxy and part.Proxy.Type and part.Proxy.Type == "Subject":
+                    FreeCAD.Console.PrintMessage(f"already converted.\n")
+                    continue
+
+            # TODO: 変換済みのPartを指定した場合は無視
+            # Linkに自身を含むカスタムPartの存在有無で判定する
+
+            # カスタムPartを生成
+            fp = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", part.Label)
+            Subject(fp, part)
+
+        FreeCAD.ActiveDocument.recompute()
+
+    def IsActive(self):
+        '''Here you can define if the command must be active or not (greyed) if certain conditions
+        are met or not. This function is optional.'''
+        if FreeCAD.ActiveDocument is None:
+            return False
+        
+        if Gui.Selection.getSelection() is None:
+            return False
+        
+        return True
+        
+    def GetResources(self):
+        '''Return the icon which will appear in the tree view. This method is optional and if not defined a default icon is shown.'''
+        return {'Pixmap'  : os.path.join(_icondir_, 'template_resource.svg'),
+                'Accel' : '', # a default shortcut (optional)
+                'MenuText': 'Convert',
+                'ToolTip' : 'Convert as a subject model.' }               
+
+    def prepare(self):
+        self.convertable_parts = []
+
+    def process_object(self, obj):
+        if obj.isDerivedFrom("Part::Feature"):
+            FreeCAD.Console.PrintMessage(f"This is convertable.\n")
+            self.convertable_parts.append(obj)
+            # if hasattr(obj, "Hoge") == False:
+            #     obj.addProperty("App::PropertyFloat", "Hoge", "Fuga", "Bar")
+
+        # 子要素を再帰的に処理する
+        elif hasattr(obj, 'Group') and obj.Group:
+            for child in obj.Group:
+                self.process_object(child)
+
 class ExportAsStlFilesCommand():
     '''This class will be loaded when the workbench is activated in FreeCAD. You must restart FreeCAD to apply changes in this class'''  
     convertable_parts = []
@@ -117,10 +198,11 @@ class ExportAsStlFilesCommand():
         FreeCAD.Console.PrintMessage(f"Convertion successful. Save to {filepath}.\n")
 
 Gui.addCommand('Export(stl files)', ExportAsStlFilesCommand())
+Gui.addCommand('CreateSubject', CreateSubjectCommand())
 
 # デバッグ用 不要になったらコメントアウトする
-# import ptvsd
-# print("Waiting for debugger attach")
-# # 5678 is the default attach port in the VS Code debug configurations
-# ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
-# ptvsd.wait_for_attach()
+import ptvsd
+print("Waiting for debugger attach")
+# 5678 is the default attach port in the VS Code debug configurations
+ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
+ptvsd.wait_for_attach()
