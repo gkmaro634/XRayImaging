@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<package format="1" xmlns="https://wiki.freecad.org/Package_Metadata">
+  <name>XRayImaging</name>
+  <description>FreeCAD Addon x-ray imaging.</description>
+  <version>0.0.1</version>
+  <date>2023-12-04</date>
+  <maintainer email="kazuma.gotoh@jp.ricoh.com">k.goto</maintainer>
+  <license file="LICENSE">BSD-3-Clause license</license>
+  <url type="repository" branch="main">https://github.com/kgoto-r/XRayImaging</url>
+  <url type="documentation">https://github.com/kgoto-r/XRayImaging/README.md</url>
+  <icon>template_resource.svg</icon>
+
+  <content>
+    <workbench>
+      <name>XRayImaging</name>
+      <classname>XRayImagingWorkbench</classname>
+      <subdirectory>./</subdirectory>
+      <freecadmin>0.20.0</freecadmin>
+    </workbench>
+  </content>
+</package>
