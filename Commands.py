@@ -12,22 +12,18 @@ _icondir_ = os.path.join(os.path.dirname(__file__), 'resources')
 class Subject():
     def __init__(self, fp, base) -> None:
         self.Type = "Subject"
-        label = f"{base.Label}{base.ID}"
-        # fp.addProperty("App::PropertyString", "Description", "Custom", "Description").Description = ""
         fp.addProperty("App::PropertyLink", "LinkedObject", "Custom", "FreeCAD object to be subject").LinkedObject = base
-        # fp.addProperty("App::PropertyXLink", "LinkedObject2", "Custom", "FreeCAD object to be subject").LinkedObject2 = base
-        fp.addProperty("App::PropertyString", "UniqueLabel", "Custom", "Label must be unique").UniqueLabel = label
+        # fp.addProperty("App::PropertyString", "UniqueLabel", "Custom", "Label must be unique").UniqueLabel = label
         fp.addProperty("App::PropertyEnumeration", "ElementType", "Custom", "ElementType").ElementType = ["Element", "Compound", "Mixture"]
         fp.addProperty("App::PropertyString", "Element", "Custom", "Element. This property is effective only if the ElementType is Element.").Element = "Fe" # TODO: Selectable from ["Fe", "C",,,and more]
         fp.addProperty("App::PropertyFloat", "Density", "Custom", "Density[g/cm^3]. This property is effective only if the ElementType is Compound or Mixture.").Density = 1.0
         # fp.addProperty("App::PropertyVectorDistance", "Translate", "Base", "Translate").Translate = base.Placement.Base
         # fp.addProperty("App::PropertyRotation", "Rotation", "Base", "Rotation").Rotation = base.Placement.Rotation
 
-        fp.Label = f"s_{base.Label}"
         fp.Placement = base.Placement
         fp.setPropertyStatus("Placement", "ReadOnly")
         fp.setPropertyStatus("Label", "ReadOnly")
-        fp.setPropertyStatus("UniqueLabel", "Hidden") # set "-Hidden" to visible
+        # fp.setPropertyStatus("UniqueLabel", "Hidden") # set "-Hidden" to visible
         fp.setPropertyStatus("LinkedObject", "ReadOnly")
         fp.Proxy = self
         # self.original_object = obj
@@ -63,11 +59,13 @@ class CreateSubjectCommand():
                     FreeCAD.Console.PrintMessage(f"already converted.\n")
                     continue
 
-            # TODO: 変換済みのPartを指定した場合は無視
-            # Linkに自身を含むカスタムPartの存在有無で判定する
+            # 変換済みのPartを指定した場合は無視
+            unique_label = f"s_{part.Label}{part.ID}"
+            if FreeCAD.ActiveDocument.getObject(unique_label):
+                FreeCAD.Console.PrintMessage(f"already converted.\n")
 
             # カスタムPartを生成
-            fp = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", part.Label)
+            fp = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", unique_label)
             Subject(fp, part)
 
         FreeCAD.ActiveDocument.recompute()
