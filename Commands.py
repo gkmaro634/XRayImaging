@@ -12,8 +12,23 @@ _icondir_ = os.path.join(os.path.dirname(__file__), 'resources')
 class Subject():
     def __init__(self, fp, base) -> None:
         self.Type = "Subject"
-        fp.addProperty("App::PropertyString", "Description", "Base", "Description").Description = ""
-        fp.addProperty("App::PropertyLink", "Base", "OpticalObject", "FreeCAD object to be subject").Base = base
+        label = f"{base.Label}{base.ID}"
+        # fp.addProperty("App::PropertyString", "Description", "Custom", "Description").Description = ""
+        fp.addProperty("App::PropertyLink", "LinkedObject", "Custom", "FreeCAD object to be subject").LinkedObject = base
+        # fp.addProperty("App::PropertyXLink", "LinkedObject2", "Custom", "FreeCAD object to be subject").LinkedObject2 = base
+        fp.addProperty("App::PropertyString", "UniqueLabel", "Custom", "Label must be unique").UniqueLabel = label
+        fp.addProperty("App::PropertyEnumeration", "ElementType", "Custom", "ElementType").ElementType = ["Element", "Compound", "Mixture"]
+        fp.addProperty("App::PropertyString", "Element", "Custom", "Element. This property is effective only if the ElementType is Element.").Element = "Fe" # TODO: Selectable from ["Fe", "C",,,and more]
+        fp.addProperty("App::PropertyFloat", "Density", "Custom", "Density[g/cm^3]. This property is effective only if the ElementType is Compound or Mixture.").Density = 1.0
+        # fp.addProperty("App::PropertyVectorDistance", "Translate", "Base", "Translate").Translate = base.Placement.Base
+        # fp.addProperty("App::PropertyRotation", "Rotation", "Base", "Rotation").Rotation = base.Placement.Rotation
+
+        fp.Label = f"s_{base.Label}"
+        fp.Placement = base.Placement
+        fp.setPropertyStatus("Placement", "ReadOnly")
+        fp.setPropertyStatus("Label", "ReadOnly")
+        fp.setPropertyStatus("UniqueLabel", "Hidden") # set "-Hidden" to visible
+        fp.setPropertyStatus("LinkedObject", "ReadOnly")
         fp.Proxy = self
         # self.original_object = obj
         # if hasattr(obj, "CustomProperty") == False:
@@ -201,8 +216,8 @@ Gui.addCommand('Export(stl files)', ExportAsStlFilesCommand())
 Gui.addCommand('CreateSubject', CreateSubjectCommand())
 
 # デバッグ用 不要になったらコメントアウトする
-import ptvsd
-print("Waiting for debugger attach")
-# 5678 is the default attach port in the VS Code debug configurations
-ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
-ptvsd.wait_for_attach()
+# import ptvsd
+# print("Waiting for debugger attach")
+# # 5678 is the default attach port in the VS Code debug configurations
+# ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
+# ptvsd.wait_for_attach()
