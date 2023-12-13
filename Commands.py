@@ -55,7 +55,7 @@ class LightSource():
         """
         Called on document recompute
         """        
-        sphere = Part.makeSphere(1)
+        sphere = Part.makeSphere(1, FreeCAD.Vector(100, 0, 0), FreeCAD.Vector(1, 0, 0))
         obj.Shape = sphere
 
 class Detector():
@@ -84,7 +84,7 @@ class Detector():
         """        
         width = obj.Width * obj.ColumnPixelSpacing
         height = obj.Height * obj.RowPixelSpacing
-        plane = Part.makePlane(width, height, FreeCAD.Vector(-10, 0, 0), FreeCAD.Vector(1, 0, 0))
+        plane = Part.makePlane(height, width, FreeCAD.Vector(-100, width / 2, -height / 2), FreeCAD.Vector(1, 0, 0))
         obj.Shape = plane
 
         edges = obj.Shape.Edges
@@ -95,7 +95,6 @@ class Detector():
         vec = v2 - v1 if obj.UpVectorDirection == "Positive"  else  v1 - v2
         print(vec)
         obj.UpVector = FreeCAD.Vector(vec.normalize())
-
 
 class ViewProviderLightSource:
 
