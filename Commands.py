@@ -36,8 +36,13 @@ class Subject():
     def execute(self, obj):
         """
         Called on document recompute
-        """        
-        pass
+        """
+        if obj.ElementType == "Element":
+            obj.setPropertyStatus("Density", "ReadOnly")
+            obj.setPropertyStatus("Element", "-ReadOnly")
+        else:
+            obj.setPropertyStatus("Density", "-ReadOnly")
+            obj.setPropertyStatus("Element", "ReadOnly")
 
 class LightSource():
     def __init__(self, fp) -> None:
