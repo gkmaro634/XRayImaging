@@ -63,14 +63,20 @@ class Detector():
         self.Type = "Detector"
         fp.Proxy = self
 
-        fp.addProperty("App::PropertyVector", "UpVector", "Custom", "the orientation of the X-ray detector.").UpVector = FreeCAD.Vector(0, 0, 1)
         fp.addProperty("App::PropertyInteger", "Width", "Custom", "the number of pixels along the X-axis").Width = 60
         fp.addProperty("App::PropertyInteger", "Height", "Custom", "the number of pixels along the Y-axis").Height = 40
         fp.addProperty("App::PropertyFloat", "ColumnPixelSpacing", "Custom", "the pixel size along the X-axis").ColumnPixelSpacing = 1.0
         fp.addProperty("App::PropertyFloat", "RowPixelSpacing", "Custom", "the pixel size along the Y-axis").RowPixelSpacing = 1.0
+        fp.addProperty("App::PropertyEnumeration", "UpVectorEdge", "Custom", "UpVectorEdge").UpVectorEdge = ["0", "1"]
+        fp.addProperty("App::PropertyEnumeration", "UpVectorDirection", "Custom", "UpVectorDirection").UpVectorDirection = ["Positive", "Negative"]
+        fp.addProperty("App::PropertyVector", "UpVector", "Custom", "the orientation of the X-ray detector.").UpVector = FreeCAD.Vector(0, 0, 1)
+        # fp.addProperty("App::PropertyLink", "LinkedObject", "Custom", "FreeCAD object to be subject").LinkedObject = base
 
         # fp.EnergyUnit = "keV"
+        fp.UpVectorEdge = "0"
+        fp.UpVectorDirection = "Positive"
         fp.setPropertyStatus("Label", "ReadOnly")
+        fp.setPropertyStatus("UpVector", "ReadOnly")
 
     def execute(self, obj):
         """
@@ -80,6 +86,16 @@ class Detector():
         height = obj.Height * obj.RowPixelSpacing
         plane = Part.makePlane(width, height, FreeCAD.Vector(-10, 0, 0), FreeCAD.Vector(1, 0, 0))
         obj.Shape = plane
+
+        edges = obj.Shape.Edges
+        upvector_edge = edges[int(obj.UpVectorEdge)]
+
+        v1 = upvector_edge.Vertexes[0].Point
+        v2 = upvector_edge.Vertexes[1].Point
+        vec = v2 - v1 if obj.UpVectorDirection == "Positive"  else  v1 - v2
+        print(vec)
+        obj.UpVector = FreeCAD.Vector(vec.normalize())
+
 
 class ViewProviderLightSource:
 
