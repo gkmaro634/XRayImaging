@@ -5,6 +5,9 @@ __url__ = ['http://www.freecadweb.org']
 __doc__ = 'XRayImaging Workbench workbench'
 __version__ = '0.0.1'
 
+import FreeCADGui as Gui
+import FreeCAD
+
 class XRayImagingWorkbench (Workbench):
     def __init__(self):
         import os
@@ -17,17 +20,19 @@ class XRayImagingWorkbench (Workbench):
         '''This function is executed when FreeCAD starts'''
         import Commands
         
-        self.list = ['Export(stl files)']
+        self.list = ['Export(stl files)', "CreateSubject", "CreateLightSource"]
         self.menu = self.list
         self.appendToolbar(self.__class__.MenuText, self.list)
         self.appendMenu(self.__class__.MenuText, self.menu)
 
     def Activated(self):
         '''This function is executed when the workbench is activated'''
+        FreeCAD.Console.PrintMessage(f"Activated.\n")
         return
 
     def Deactivated(self):
         '''This function is executed when the workbench is deactivated'''
+        FreeCAD.Console.PrintMessage(f"Deactivated.\n")
         return
 
     def ContextMenu(self, recipient):
@@ -36,5 +41,5 @@ class XRayImagingWorkbench (Workbench):
     def GetClassName(self):
         # this function is mandatory if this is a full python workbench
         return 'Gui::PythonWorkbench'
-
+    
 Gui.addWorkbench(XRayImagingWorkbench())
