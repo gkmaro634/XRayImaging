@@ -56,7 +56,7 @@ class CreateSubjectCommand():
         
     def GetResources(self):
         '''Return the icon which will appear in the tree view. This method is optional and if not defined a default icon is shown.'''
-        return {'Pixmap'  : os.path.join(_icondir_, 'template_resource.svg'),
+        return {'Pixmap'  : os.path.join(_icondir_, 'convert.svg'),
                 'Accel' : '', # a default shortcut (optional)
                 'MenuText': 'Convert',
                 'ToolTip' : 'Convert as a subject model.' }               
@@ -110,7 +110,7 @@ class CreateLightSourceCommand():
         
     def GetResources(self):
         '''Return the icon which will appear in the tree view. This method is optional and if not defined a default icon is shown.'''
-        return {'Pixmap'  : os.path.join(_icondir_, 'template_resource.svg'),
+        return {'Pixmap'  : os.path.join(_icondir_, 'ls_and_detector.svg'),
                 'Accel' : '', # a default shortcut (optional)
                 'MenuText': 'LightSource',
                 'ToolTip' : 'Create a light source.' }               
@@ -184,7 +184,7 @@ class ExportAsStlFilesCommand():
         
     def GetResources(self):
         '''Return the icon which will appear in the tree view. This method is optional and if not defined a default icon is shown.'''
-        return {'Pixmap'  : os.path.join(_icondir_, 'template_resource.svg'),
+        return {'Pixmap'  : os.path.join(_icondir_, 'acq_image.svg'),
                 'Accel' : '', # a default shortcut (optional)
                 'MenuText': 'Export(stl files)',
                 'ToolTip' : 'Export pars as stl files.' }               
