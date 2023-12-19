@@ -159,18 +159,14 @@ class Composition:
 
         
 class Engine:
-    windowId = 0
-
     def __init__(self) -> None:
-        self.windowId = 0
-        pass
+        self.windowId = -1
 
     def Shot(self, composition:Composition):
         return self._shot(composition.lightSource, composition.detector, composition.subjects)
 
     def _shot(self, lightSource:PointLightSource, detector:Detector, samples:List[Sample]):
-        self.windowId += 1
-        gvxr.createOpenGLContext(self.windowId)
+        gvxr.createWindow(self.windowId, False, "OPENGL")
 
         gvxr.clearDetectorEnergyResponse()
         gvxr.removePolygonMeshesFromSceneGraph()
@@ -218,14 +214,15 @@ class Engine:
         # compute xray image
         xrayimage = gvxr.computeXRayImage()
 
-        gvxr.setWindowBackGroundColour(0.25, 0.25, 0.25, self.windowId)
-        gvxr.displayScene(False, self.windowId)
-        gvxr.displayScene(False, self.windowId)
-        screenshot = gvxr.takeScreenshot(self.windowId)
+        # デバッグ用
+        # gvxr.setWindowBackGroundColour(0.25, 0.25, 0.25, self.windowId)
+        # gvxr.displayScene(False, self.windowId)
+        # gvxr.renderLoop()
+
         gvxr.destroyWindow(self.windowId)
 
-        return (xrayimage, screenshot)
-    
+        return xrayimage
+
     def Close(self):
         gvxr.destroyAllWindows()
         return

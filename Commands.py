@@ -126,6 +126,16 @@ class AcquireXRayImageCommand():
     '''This class will be loaded when the workbench is activated in FreeCAD. You must restart FreeCAD to apply changes in this class'''  
 
     def __init__(self) -> None:
+        try:
+            import libs.gvxrEngine as gvxrEx
+            import matplotlib.pyplot as plt
+            import numpy as np
+            self.can_compute_xray = True
+            self.engine = gvxrEx.Engine()
+
+        except Exception as ex:
+            self.can_compute_xray = False
+            FreeCAD.Console.PrintMessage(ex)
         pass
 
     def Activated(self):
@@ -154,27 +164,21 @@ class AcquireXRayImageCommand():
         json_path = componentsStore.SaveAsJson(folder_path)
 
         # X線画像出力部にJsonパスを渡す
-        try:
+        if self.can_compute_xray:
             import libs.gvxrEngine as gvxrEx
             import matplotlib.pyplot as plt
             import numpy as np
 
-            gvxrComponents = gvxrEx.Composition.CreateFromJson(json_path)
-            gvxrEngine = gvxrEx.Engine()
-            xray_img, screen_img = gvxrEngine.Shot(gvxrComponents)
+            try:
+                gvxrComponents = gvxrEx.Composition.CreateFromJson(json_path)
+                xray_img = self.engine.Shot(gvxrComponents)
 
-            xray_fpath = os.path.join(folder_path, "xrayimage.tiff")
-            print(f"Save xray image. {xray_fpath}")
-            plt.imsave(xray_fpath, xray_img, cmap='gray')
-            FreeCAD.Console.PrintMessage(f"Save xray image: {xray_fpath}.\n")
+                xray_fpath = os.path.join(folder_path, "xrayimage.tiff")
+                plt.imsave(xray_fpath, xray_img, cmap='gray')
+                FreeCAD.Console.PrintMessage(f"Save xray image: {xray_fpath}.\n")
 
-            screen_fpath = os.path.join(folder_path, "screenshot.png")
-            print(f"Save screenshot. {screen_fpath}")
-            plt.imsave(screen_fpath, np.array(screen_img))
-            FreeCAD.Console.PrintMessage(f"Save screenshot image: {screen_fpath}.\n")
-
-        except Exception as ex:
-            FreeCAD.Console.PrintMessage(ex)
+            except Exception as ex:
+                FreeCAD.Console.PrintMessage(ex)
 
     def IsActive(self):
         '''Here you can define if the command must be active or not (greyed) if certain conditions
