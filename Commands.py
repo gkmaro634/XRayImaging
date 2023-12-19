@@ -4,9 +4,8 @@ import os
 import FreeCADGui as Gui
 import FreeCAD
 from PySide import QtGui
-import Mesh
 import json
-from libs.FreeCADComponents import Subject, Detector, LightSource, ViewProviderDetector, ViewProviderLightSource
+from libs.FreeCADComponents import ComponentsStore, SubjectStore, Subject, Detector, LightSource, ViewProviderDetector, ViewProviderLightSource
 
 _icondir_ = os.path.join(os.path.dirname(__file__), 'resources')
 
@@ -126,18 +125,12 @@ class CreateOpticalSystemCommand():
 
 class AcquireXRayImageCommand():
     '''This class will be loaded when the workbench is activated in FreeCAD. You must restart FreeCAD to apply changes in this class'''  
-    convertable_parts = []
-    file_index = 0
-    converted_files = []
 
     def __init__(self) -> None:
-        self.prepare()
+        pass
 
     def Activated(self):
         '''Will be called when the feature is executed.'''
-
-        # キャッシュ初期化
-        self.prepare()
 
         # 出力先フォルダを決める
         folder_path = self.get_folder_path()
@@ -147,41 +140,22 @@ class AcquireXRayImageCommand():
 
         FreeCAD.Console.PrintMessage(f"Selected folder: {folder_path}.\n")
 
-        # 選択されたPartを特定する
-        objects = Gui.Selection.getSelection()
-        for obj in objects:
-            self.process_object(obj)
-        
-        if len(self.convertable_parts) <= 0:
-            FreeCAD.Console.PrintMessage(f"Convertable parts are not found.\n")
+        # Subjectを探索する
+        r = FreeCAD.ActiveDocument.findObjects("Part::FeaturePython")
+        subjects = [fp for fp in r if fp.Proxy.Type == "Subject"]
+        if len(subjects) <= 0:
+            FreeCAD.Console.PrintMessage(f"Subjects are not found.\n")
             return
 
-        # PartごとにSTLに変換してファイル出力する
-        for part in self.convertable_parts:
-            stl_fname = f'{self.file_index:02}.stl'
-            stl_fpath = os.path.join(folder_path, stl_fname)
-            try:
-                self.export_as_stl(part, stl_fpath)
-                self.converted_files.append(stl_fpath)
-                self.file_index += 1
-            except Exception as ex:
-                FreeCAD.Console.PrintMessage(f"{ex}\n")
+        # 構成部品をJsonファイル化する
+        ls = FreeCAD.ActiveDocument.getObject("LightSource")
+        det = FreeCAD.ActiveDocument.getObject("Detector")
+        subjectsStore = SubjectStore(subjects)
+        componentsStore = ComponentsStore(subjectsStore, ls, det)
+        json_path = componentsStore.SaveAsJson(folder_path)
 
-        # 出力したファイルパスをJsonでファイル出力する
-        d = {}
-        d['Polygons'] = []
-        for fpath in self.converted_files:
-            stl_d = {}
-            stl_d['SampleType'] = 'Polygon'
-            stl_d['Label'] = 'unknown'
-            stl_d['Path'] = fpath
-            stl_d['LengthUnit'] = 'mm'
-            # more properties...
-            d['Polygons'].append(stl_d)
-
-        json_fpath = os.path.join(folder_path, "converted.json")
-        with open(json_fpath, "w") as f:
-            json.dump(d, f)
+        # X線画像出力部にJsonパスを渡す
+        # TODO
 
     def IsActive(self):
         '''Here you can define if the command must be active or not (greyed) if certain conditions
@@ -206,23 +180,6 @@ class AcquireXRayImageCommand():
                 'MenuText': 'AcquireXRayImage',
                 'ToolTip' : 'Acquire an x-ray image' }               
     
-    def prepare(self):
-        self.convertable_parts = []
-        self.file_index = 0
-        self.converted_files = []
-
-    def process_object(self, obj):
-
-        if obj.isDerivedFrom("Part::Feature"):
-            # STLに変換して保存する
-            FreeCAD.Console.PrintMessage(f"This is convertable.\n")
-            self.convertable_parts.append(obj)
-
-        # 子要素を再帰的に処理する
-        elif hasattr(obj, 'Group') and obj.Group:
-            for child in obj.Group:
-                self.process_object(child)
-
     def get_folder_path(self):
         dialog = QtGui.QFileDialog()
         dialog.setFileMode(QtGui.QFileDialog.Directory)
@@ -233,12 +190,6 @@ class AcquireXRayImageCommand():
         else:
             return None
     
-    def export_as_stl(self, part, filepath):
-        mesh = Mesh.Mesh()
-        mesh.addFacets(part.Shape.tessellate(0.1))
-        mesh.write(filepath)
-        FreeCAD.Console.PrintMessage(f"Convertion successful. Save to {filepath}.\n")
-
 Gui.addCommand('CreateOpticalSystem', CreateOpticalSystemCommand())
 Gui.addCommand('ConvertSubject', ConvertSubjectCommand())
 Gui.addCommand('AcquireXRayImage', AcquireXRayImageCommand())
