@@ -20,7 +20,7 @@ class XRayImagingWorkbench (Workbench):
         '''This function is executed when FreeCAD starts'''
         import Commands
         
-        self.list = ["CreateOpticalSystem", "ConvertSubject", 'Export(stl files)']
+        self.list = ["CreateOpticalSystem", "ConvertSubject", 'AcquireXRayImage']
         self.menu = self.list
         self.appendToolbar(self.__class__.MenuText, self.list)
         self.appendMenu(self.__class__.MenuText, self.menu)

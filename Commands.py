@@ -122,7 +122,7 @@ class CreateOpticalSystemCommand():
                 'MenuText': 'CreateOpticalSystem',
                 'ToolTip' : 'Create a light source and a detector.' }               
 
-class ExportAsStlFilesCommand():
+class AcquireXRayImageCommand():
     '''This class will be loaded when the workbench is activated in FreeCAD. You must restart FreeCAD to apply changes in this class'''  
     convertable_parts = []
     file_index = 0
@@ -193,8 +193,8 @@ class ExportAsStlFilesCommand():
         '''Return the icon which will appear in the tree view. This method is optional and if not defined a default icon is shown.'''
         return {'Pixmap'  : os.path.join(_icondir_, 'acq_image.svg'),
                 'Accel' : '', # a default shortcut (optional)
-                'MenuText': 'Export(stl files)',
-                'ToolTip' : 'Export pars as stl files.' }               
+                'MenuText': 'AcquireXRayImage',
+                'ToolTip' : 'Acquire an x-ray image' }               
     
     def prepare(self):
         self.convertable_parts = []
@@ -231,7 +231,7 @@ class ExportAsStlFilesCommand():
 
 Gui.addCommand('CreateOpticalSystem', CreateOpticalSystemCommand())
 Gui.addCommand('ConvertSubject', ConvertSubjectCommand())
-Gui.addCommand('Export(stl files)', ExportAsStlFilesCommand())
+Gui.addCommand('AcquireXRayImage', AcquireXRayImageCommand())
 
 # デバッグ用 不要になったらコメントアウトする
 # import ptvsd
