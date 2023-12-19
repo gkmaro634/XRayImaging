@@ -12,14 +12,16 @@ class ComponentsStore():
         self.detector = detector
 
     def SaveAsJson(self, dirpath):
-        filepath_l = self.subjectsStore.SaveAsStl(dirpath)
-
         d = {}
+
+        # Subjects
+        filepath_d = self.subjectsStore.SaveAsStl(dirpath)
+
         d['Polygons'] = []
-        for fpath in filepath_l:
+        for fpath, subject in filepath_d.items():
             stl_d = {}
             stl_d['SampleType'] = 'Polygon'
-            stl_d['Label'] = 'unknown'
+            stl_d['Label'] = subject.Label
             stl_d['Path'] = fpath
             stl_d['LengthUnit'] = 'mm'
             # more properties...
@@ -34,25 +36,28 @@ class SubjectStore():
         self.subjects = subjects
 
     def SaveAsStl(self, dirpath):
-        # PartごとにSTLに変換してファイル出力し、ファイスパスのリストを返す
-        filepath_l = []
+        # PartごとにSTLに変換してファイル出力し、Subjectとファイスパスの辞書を返す
+        filepath_d = {}
         file_index = 0
         for subject in self.subjects:
             stl_fname = f'{file_index:02}.stl'
             stl_fpath = os.path.join(dirpath, stl_fname)
             try:
                 self.export_as_stl(subject.LinkedObject, stl_fpath)
-                filepath_l.append(stl_fpath)
+                filepath_d[stl_fpath] = subject
                 file_index += 1
             except Exception as ex:
                 FreeCAD.Console.PrintMessage(f"{ex}\n")
-        return filepath_l
+        return filepath_d
 
     def export_as_stl(self, part, filepath):
-        mesh = Mesh.Mesh()
-        mesh.addFacets(part.Shape.tessellate(0.1))
-        mesh.write(filepath)
-        FreeCAD.Console.PrintMessage(f"Convertion successful. Save to {filepath}.\n")
+        try:
+            mesh = Mesh.Mesh()
+            mesh.addFacets(part.Shape.tessellate(0.1))
+            mesh.write(filepath)
+            FreeCAD.Console.PrintMessage(f"Convertion successful. Save to {filepath}.\n")
+        except Exception as ex:
+            raise ex
 
 class Subject():
     def __init__(self, fp, base) -> None:
