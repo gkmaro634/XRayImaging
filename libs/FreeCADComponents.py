@@ -4,6 +4,7 @@ import Part
 import Mesh
 import os
 import json
+import numpy as np
 
 class ComponentsStore():
     def __init__(self, subjectsStore, lightSource, detector) -> None:
@@ -14,17 +15,30 @@ class ComponentsStore():
     def SaveAsJson(self, dirpath):
         d = {}
 
-        # Subjects
-        filepath_d = self.subjectsStore.SaveAsStl(dirpath)
+        # LightSource
 
+        # Detector
+
+        # Subjects
         d['Polygons'] = []
+        filepath_d = self.subjectsStore.SaveAsStl(dirpath)
         for fpath, subject in filepath_d.items():
             stl_d = {}
             stl_d['SampleType'] = 'Polygon'
             stl_d['Label'] = subject.Label
             stl_d['Path'] = fpath
             stl_d['LengthUnit'] = 'mm'
-            # more properties...
+            stl_d['Material'] = {}
+            stl_d['Material']['Type'] = subject.ElementType
+            stl_d['Material']['Element'] = subject.Element
+            stl_d['Material']['Density'] = subject.Density
+            stl_d['Type'] = 'inner'
+            pos = subject.LinkedObject.Placement.Base
+            stl_d['Translate'] = [pos.x, pos.y, pos.z]
+            axis = subject.LinkedObject.Placement.Rotation.Axis
+            stl_d['RotateAxis'] = [axis.x, axis.y, axis.z]
+            angle_rad = subject.LinkedObject.Placement.Rotation.Angle
+            stl_d['RotateAngle'] = np.rad2deg(angle_rad)
             d['Polygons'].append(stl_d)
 
         json_fpath = os.path.join(dirpath, "converted.json")
