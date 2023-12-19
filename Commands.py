@@ -93,13 +93,15 @@ class CreateOpticalSystemCommand():
         '''Will be called when the feature is executed.'''
 
         # カスタムPartを生成
-        ls_fp = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", self.lightsource_name)
-        LightSource(ls_fp)
-        ViewProviderLightSource(ls_fp.ViewObject)
+        if FreeCAD.ActiveDocument.getObject(self.lightsource_name) is None:
+            ls_fp = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", self.lightsource_name)
+            LightSource(ls_fp)
+            ViewProviderLightSource(ls_fp.ViewObject)
 
-        det_fp = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", self.detector_name)
-        Detector(det_fp)
-        ViewProviderDetector(det_fp.ViewObject)
+        if FreeCAD.ActiveDocument.getObject(self.detector_name) is None:
+            det_fp = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", self.detector_name)
+            Detector(det_fp)
+            ViewProviderDetector(det_fp.ViewObject)
 
         FreeCAD.ActiveDocument.recompute()
 
@@ -184,10 +186,18 @@ class AcquireXRayImageCommand():
     def IsActive(self):
         '''Here you can define if the command must be active or not (greyed) if certain conditions
         are met or not. This function is optional.'''
-        if FreeCAD.ActiveDocument and Gui.Selection.getSelection():
-            return(True)
-        else:
-            return(False)
+        
+        # 
+        if FreeCAD.ActiveDocument is None:
+            return False
+        
+        if FreeCAD.ActiveDocument.getObject("LightSource") is None:
+            return False
+
+        if FreeCAD.ActiveDocument.getObject("Detector") is None:
+            return False
+        
+        return True
         
     def GetResources(self):
         '''Return the icon which will appear in the tree view. This method is optional and if not defined a default icon is shown.'''
