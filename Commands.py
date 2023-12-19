@@ -10,7 +10,7 @@ from libs.FreeCADComponents import Subject, Detector, LightSource, ViewProviderD
 
 _icondir_ = os.path.join(os.path.dirname(__file__), 'resources')
 
-class CreateSubjectCommand():
+class ConvertSubjectCommand():
     '''This class will be loaded when the workbench is activated in FreeCAD. You must restart FreeCAD to apply changes in this class'''  
     convertable_parts = []
 
@@ -27,9 +27,17 @@ class CreateSubjectCommand():
 
         for part in self.convertable_parts:
             # カスタムPartを指定した場合は無視
-            if hasattr(part, "Proxy"):
-                if part.Proxy and part.Proxy.Type and part.Proxy.Type == "Subject":
+            if hasattr(part, "Proxy") and part.Proxy and part.Proxy.Type:
+                if part.Proxy.Type == "Subject":
                     FreeCAD.Console.PrintMessage(f"already converted.\n")
+                    continue
+
+                elif part.Proxy.Type == "LightSource":
+                    FreeCAD.Console.PrintMessage(f"no need to convert.\n")
+                    continue
+
+                elif part.Proxy.Type == "Detector":
+                    FreeCAD.Console.PrintMessage(f"no need to convert.\n")
                     continue
 
             # 変換済みのPartを指定した場合は無視
@@ -58,25 +66,23 @@ class CreateSubjectCommand():
         '''Return the icon which will appear in the tree view. This method is optional and if not defined a default icon is shown.'''
         return {'Pixmap'  : os.path.join(_icondir_, 'convert.svg'),
                 'Accel' : '', # a default shortcut (optional)
-                'MenuText': 'Convert',
-                'ToolTip' : 'Convert as a subject model.' }               
+                'MenuText': 'ConvertSubject',
+                'ToolTip' : 'Convert a part as a subject model.' }               
 
     def prepare(self):
         self.convertable_parts = []
 
     def process_object(self, obj):
         if obj.isDerivedFrom("Part::Feature"):
-            FreeCAD.Console.PrintMessage(f"This is convertable.\n")
+            # FreeCAD.Console.PrintMessage(f"This is convertable.\n")
             self.convertable_parts.append(obj)
-            # if hasattr(obj, "Hoge") == False:
-            #     obj.addProperty("App::PropertyFloat", "Hoge", "Fuga", "Bar")
 
         # 子要素を再帰的に処理する
         elif hasattr(obj, 'Group') and obj.Group:
             for child in obj.Group:
                 self.process_object(child)
 
-class CreateLightSourceCommand():
+class CreateOpticalSystemCommand():
 
     def __init__(self) -> None:
         self.lightsource_name = f"LightSource"
@@ -112,8 +118,8 @@ class CreateLightSourceCommand():
         '''Return the icon which will appear in the tree view. This method is optional and if not defined a default icon is shown.'''
         return {'Pixmap'  : os.path.join(_icondir_, 'ls_and_detector.svg'),
                 'Accel' : '', # a default shortcut (optional)
-                'MenuText': 'LightSource',
-                'ToolTip' : 'Create a light source.' }               
+                'MenuText': 'CreateOpticalSystem',
+                'ToolTip' : 'Create a light source and a detector.' }               
 
 class ExportAsStlFilesCommand():
     '''This class will be loaded when the workbench is activated in FreeCAD. You must restart FreeCAD to apply changes in this class'''  
@@ -222,9 +228,9 @@ class ExportAsStlFilesCommand():
         mesh.write(filepath)
         FreeCAD.Console.PrintMessage(f"Convertion successful. Save to {filepath}.\n")
 
+Gui.addCommand('CreateOpticalSystem', CreateOpticalSystemCommand())
+Gui.addCommand('ConvertSubject', ConvertSubjectCommand())
 Gui.addCommand('Export(stl files)', ExportAsStlFilesCommand())
-Gui.addCommand('CreateSubject', CreateSubjectCommand())
-Gui.addCommand('CreateLightSource', CreateLightSourceCommand())
 
 # デバッグ用 不要になったらコメントアウトする
 # import ptvsd

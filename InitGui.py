@@ -20,7 +20,7 @@ class XRayImagingWorkbench (Workbench):
         '''This function is executed when FreeCAD starts'''
         import Commands
         
-        self.list = ['Export(stl files)', "CreateSubject", "CreateLightSource"]
+        self.list = ["CreateOpticalSystem", "ConvertSubject", 'Export(stl files)']
         self.menu = self.list
         self.appendToolbar(self.__class__.MenuText, self.list)
         self.appendMenu(self.__class__.MenuText, self.menu)
@@ -41,5 +41,6 @@ class XRayImagingWorkbench (Workbench):
     def GetClassName(self):
         # this function is mandatory if this is a full python workbench
         return 'Gui::PythonWorkbench'
-    
+
 Gui.addWorkbench(XRayImagingWorkbench())
+
