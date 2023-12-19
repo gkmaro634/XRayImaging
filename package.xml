@@ -3,9 +3,9 @@
   <name>XRayImaging</name>
   <description>FreeCAD Addon x-ray imaging.</description>
   <version>0.0.1</version>
-  <date>2023-12-04</date>
+  <date>2023-12-19</date>
   <maintainer email="kazuma.gotoh@jp.ricoh.com">k.goto</maintainer>
-  <license file="LICENSE">BSD-3-Clause license</license>
+  <license file="LICENSE">LGPL-2.1 license</license>
   <url type="repository" branch="main">https://github.com/kgoto-r/XRayImaging</url>
   <url type="documentation">https://github.com/kgoto-r/XRayImaging/README.md</url>
 
