@@ -74,8 +74,13 @@ class ComponentsStore():
         d["LengthUnit"] = "mm"
         vec = detector.UpVector
         d["UpVector"] = [vec.x, vec.y, vec.z]
-        d["NumberOfPixels"] = [detector.Width, detector.Height]
-        d["Spacing"] = [detector.ColumnPixelSpacing, detector.RowPixelSpacing]
+        # UpVectorと矩形一辺との向きで縦横を切り替える
+        if detector.UpVectorEdge == "0":
+            d["NumberOfPixels"] = [detector.Height, detector.Width]
+            d["Spacing"] = [detector.RowPixelSpacing, detector.ColumnPixelSpacing]
+        else:
+            d["NumberOfPixels"] = [detector.Width, detector.Height]
+            d["Spacing"] = [detector.ColumnPixelSpacing, detector.RowPixelSpacing]
         return d
 
 
