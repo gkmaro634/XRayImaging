@@ -44,6 +44,7 @@ class ConvertSubjectCommand():
             unique_label = f"s_{part.Label}{part.ID}"
             if FreeCAD.ActiveDocument.getObject(unique_label):
                 FreeCAD.Console.PrintMessage(f"already converted.\n")
+                continue
 
             # カスタムPartを生成
             fp = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", unique_label)

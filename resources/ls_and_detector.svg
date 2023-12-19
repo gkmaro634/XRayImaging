@@ -1,8 +1,8 @@
 <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M8.5 28V16.309L23.5 8.80902V47.691L8.5 55.191V28Z" fill="url(#paint0_linear_1_2)" stroke="black"/>
 <line x1="55.8321" y1="37.1852" x2="23.8321" y2="8.18525" stroke="#A1016D" stroke-width="0.5"/>
-<line x1="54.894" y1="38.2264" x2="7.89402" y2="16.2264" stroke="#A1016D" stroke-width="0.5"/>
-<line x1="55.0806" y1="39.2367" x2="8.08057" y2="55.2367" stroke="#A1016D" stroke-width="0.5"/>
+<line x1="54.788" y1="38.4528" x2="7.78803" y2="16.4528" stroke="#A1016D"/>
+<line x1="55.1611" y1="39.4733" x2="8.16113" y2="55.4733" stroke="#A1016D"/>
 <line x1="56.0677" y1="38.2407" x2="24.0677" y2="47.2407" stroke="#A1016D" stroke-width="0.5"/>
 <circle cx="56" cy="38" r="1.5" fill="url(#paint1_radial_1_2)" stroke="black"/>
 <defs>
