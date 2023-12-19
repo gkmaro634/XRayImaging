@@ -15,10 +15,11 @@ class PointLightSource:
     lengthUnit = "mm"
     energyUnit = "keV"
 
-    def __init__(self, position, energy, n_photones) -> None:
+    def __init__(self, position, energy, n_photones, energyUnit = "keV") -> None:
         self.position = position
         self.energy = energy
         self.n_photons = n_photones
+        self.energyUnit = energyUnit
         self.x = position[0]
         self.y = position[1]
         self.z = position[2]
@@ -136,7 +137,7 @@ class Composition:
             # buff = f.readlines()
             d = json.load(f)
 
-        lightSource = PointLightSource(np.array(d['Source']['Position']), d['Source']['Beam']['Energy'], d['Source']['Beam']['PhotonCount'])
+        lightSource = PointLightSource(np.array(d['Source']['Position']), d['Source']['Beam']['Energy'], d['Source']['Beam']['PhotonCount'], d['Source']['Beam']['Unit'])
         detector = Detector(np.array(d['Detector']['Position']), np.array(d['Detector']['UpVector']), d['Detector']['NumberOfPixels'][0], d['Detector']['NumberOfPixels'][1], d['Detector']['Spacing'][0], d['Detector']['Spacing'][1])
         samples = []
         if 'Cylinders' in d.keys():

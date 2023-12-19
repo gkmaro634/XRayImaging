@@ -47,12 +47,12 @@ class ComponentsStore():
         d['Material']['Element'] = subject.Element
         d['Material']['Density'] = subject.Density
         d['Type'] = 'inner'
-        pos = subject.LinkedObject.Placement.Base
+        pos = subject.LinkedObject.Shape.CenterOfGravity
         d['Translate'] = [pos.x, pos.y, pos.z]
         axis = subject.LinkedObject.Placement.Rotation.Axis
         d['RotateAxis'] = [axis.x, axis.y, axis.z]
         angle_rad = subject.LinkedObject.Placement.Rotation.Angle
-        d['RotateAngle'] = np.rad2deg(angle_rad)
+        d['RotateAngle'] = 0.# np.rad2deg(angle_rad)
         return d
 
     def _get_lightsource_dict(self, lightsource):
@@ -74,9 +74,7 @@ class ComponentsStore():
         d["LengthUnit"] = "mm"
         vec = detector.UpVector
         d["UpVector"] = [vec.x, vec.y, vec.z]
-        col = int(detector.Width / detector.ColumnPixelSpacing)
-        row = int(detector.Height / detector.RowPixelSpacing)
-        d["NumberOfPixels"] = [col, row]
+        d["NumberOfPixels"] = [detector.Width, detector.Height]
         d["Spacing"] = [detector.ColumnPixelSpacing, detector.RowPixelSpacing]
         return d
 
