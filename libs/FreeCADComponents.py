@@ -34,6 +34,7 @@ class ComponentsStore():
         json_fpath = os.path.join(dirpath, "converted.json")
         with open(json_fpath, "w") as f:
             json.dump(d, f)
+        return json_fpath
 
     def _get_subject_dict(self, fpath, subject):
         d = {}

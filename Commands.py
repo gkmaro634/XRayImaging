@@ -4,7 +4,6 @@ import os
 import FreeCADGui as Gui
 import FreeCAD
 from PySide import QtGui
-import json
 from libs.FreeCADComponents import ComponentsStore, SubjectStore, Subject, Detector, LightSource, ViewProviderDetector, ViewProviderLightSource
 
 _icondir_ = os.path.join(os.path.dirname(__file__), 'resources')
@@ -155,7 +154,27 @@ class AcquireXRayImageCommand():
         json_path = componentsStore.SaveAsJson(folder_path)
 
         # X線画像出力部にJsonパスを渡す
-        # TODO
+        try:
+            import libs.gvxrEngine as gvxrEx
+            import matplotlib.pyplot as plt
+            import numpy as np
+
+            gvxrComponents = gvxrEx.Composition.CreateFromJson(json_path)
+            gvxrEngine = gvxrEx.Engine()
+            xray_img, screen_img = gvxrEngine.Shot(gvxrComponents)
+
+            xray_fpath = os.path.join(folder_path, "xrayimage.tiff")
+            print(f"Save xray image. {xray_fpath}")
+            plt.imsave(xray_fpath, xray_img, cmap='gray')
+            FreeCAD.Console.PrintMessage(f"Save xray image: {xray_fpath}.\n")
+
+            screen_fpath = os.path.join(folder_path, "screenshot.png")
+            print(f"Save screenshot. {screen_fpath}")
+            plt.imsave(screen_fpath, np.array(screen_img))
+            FreeCAD.Console.PrintMessage(f"Save screenshot image: {screen_fpath}.\n")
+
+        except Exception as ex:
+            FreeCAD.Console.PrintMessage(ex)
 
     def IsActive(self):
         '''Here you can define if the command must be active or not (greyed) if certain conditions

@@ -139,17 +139,19 @@ class Composition:
         lightSource = PointLightSource(np.array(d['Source']['Position']), d['Source']['Beam']['Energy'], d['Source']['Beam']['PhotonCount'])
         detector = Detector(np.array(d['Detector']['Position']), np.array(d['Detector']['UpVector']), d['Detector']['NumberOfPixels'][0], d['Detector']['NumberOfPixels'][1], d['Detector']['Spacing'][0], d['Detector']['Spacing'][1])
         samples = []
-        for sampleDict in d['Cylinders']:
-            cylinder = Cylinder(sampleDict['Label'], sampleDict['Material']['Type'], sampleDict['Material']['Element'], sampleDict['Material']['Density'], sampleDict['Height'], sampleDict['Radius'])
-            cylinder.Translate(np.array(sampleDict['Translate']))
-            cylinder.Rotate(np.array(sampleDict['RotateAxis']), sampleDict['RotateAngle'])
-            samples.append(cylinder)
+        if 'Cylinders' in d.keys():
+            for sampleDict in d['Cylinders']:
+                cylinder = Cylinder(sampleDict['Label'], sampleDict['Material']['Type'], sampleDict['Material']['Element'], sampleDict['Material']['Density'], sampleDict['Height'], sampleDict['Radius'])
+                cylinder.Translate(np.array(sampleDict['Translate']))
+                cylinder.Rotate(np.array(sampleDict['RotateAxis']), sampleDict['RotateAngle'])
+                samples.append(cylinder)
 
-        for sampleDict in d['Polygons']:
-            polygon = Polygon(sampleDict['Label'], sampleDict['Material']['Type'], sampleDict['Material']['Element'], sampleDict['Material']['Density'], sampleDict['Path'])
-            polygon.Translate(np.array(sampleDict['Translate']))
-            polygon.Rotate(np.array(sampleDict['RotateAxis']), sampleDict['RotateAngle'])
-            samples.append(polygon)
+        if 'Polygons' in d.keys():
+            for sampleDict in d['Polygons']:
+                polygon = Polygon(sampleDict['Label'], sampleDict['Material']['Type'], sampleDict['Material']['Element'], sampleDict['Material']['Density'], sampleDict['Path'])
+                polygon.Translate(np.array(sampleDict['Translate']))
+                polygon.Rotate(np.array(sampleDict['RotateAxis']), sampleDict['RotateAngle'])
+                samples.append(polygon)
 
         composition = Composition(lightSource, detector, samples)
         return composition
