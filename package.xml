@@ -8,13 +8,13 @@
   <license file="LICENSE">BSD-3-Clause license</license>
   <url type="repository" branch="main">https://github.com/kgoto-r/XRayImaging</url>
   <url type="documentation">https://github.com/kgoto-r/XRayImaging/README.md</url>
-  <icon>template_resource.svg</icon>
 
   <content>
     <workbench>
       <name>XRayImaging</name>
       <classname>XRayImagingWorkbench</classname>
       <subdirectory>./</subdirectory>
+      <icon>resources/icon.svg</icon>
       <freecadmin>0.20.0</freecadmin>
     </workbench>
   </content>

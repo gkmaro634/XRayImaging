@@ -1,0 +1,23 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_104_21)">
+<path d="M0.5 26.6667V10.9916L23.5 0.769381V53.0084L0.5 63.2306V26.6667Z" fill="url(#paint0_linear_104_21)" stroke="black"/>
+<line x1="55.8261" y1="31.1796" x2="23.826" y2="0.179558" stroke="#A1016D" stroke-width="0.5"/>
+<line x1="55.8244" y1="32.4682" x2="-0.175561" y2="11.4682" stroke="#A1016D"/>
+<line x1="56.1325" y1="32.212" x2="24.1325" y2="52.212" stroke="#A1016D" stroke-width="0.5"/>
+<line x1="55.2455" y1="32.4356" x2="0.245509" y2="63.4356" stroke="#A1016D"/>
+<circle cx="56" cy="32" r="1.5" fill="url(#paint1_radial_104_21)" stroke="black"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_104_21" x1="24" y1="3.97364e-07" x2="5.88396" y2="65.2178" gradientUnits="userSpaceOnUse">
+<stop stop-color="#B9B9B9"/>
+<stop offset="1" stop-color="#666666"/>
+</linearGradient>
+<radialGradient id="paint1_radial_104_21" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(56 32) rotate(90) scale(2)">
+<stop stop-color="#1EE3E3"/>
+<stop offset="1" stop-color="#004747"/>
+</radialGradient>
+<clipPath id="clip0_104_21">
+<rect width="64" height="64" fill="white"/>
+</clipPath>
+</defs>
+</svg>
